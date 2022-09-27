@@ -1,13 +1,14 @@
-# Sample Hardhat Project
+# RareSkills Gas Puzzles 
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+## Contributors
+DO NOT COMMIT SOLUTIONS, BE SURE TO PUT ANSWERS IN `contracts_optimized` to ensure they fall into the `.gitignore`
 
-Try running some of the following tasks:
+## Players
+Your goal is to optimize the contracts such that they reach the target efficiency.
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.js
-```
+Rules
+- you may not change the optimizer level
+- you may not change the solidity version
+- you may change function names and refactor functionality as long as you don't break the business logic
+- you may make reasonable assumptions about what variable sizes are necessary to get things done
+- you may remove unnecessary or redunant logic (some have been intentionally added)

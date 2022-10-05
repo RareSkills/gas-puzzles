@@ -7,7 +7,7 @@ contract Require {
 
     function purchaseToken() external payable {
         require(
-            msg.value == 1 ether &&
+            msg.value == 0.1 ether &&
                 block.timestamp > lastPurchaseTime + COOLDOWN,
             "cannot purchase"
         );

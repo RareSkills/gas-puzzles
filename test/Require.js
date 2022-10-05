@@ -5,7 +5,7 @@ const helpers = require("@nomicfoundation/hardhat-network-helpers");
 
 use(require("chai-as-promised"));
 
-const TARGET_GAS_PRICE = 23_399;
+const TARGET_GAS_PRICE = 43_317;
 const EIGHT_DAYS = 60 * 60 * 24 * 8;
 
 const logGasUsage = (currentGasUsage) => {
@@ -31,28 +31,12 @@ describe("Require", async function () {
         await instance.deployed();
     });
 
-    describe("Payable", function () {
-        it("The functions MUST remain non-payable", async function () {
-            let error;
-            try {
-                await instance.purchaseToken({
-                    value: ethers.utils.parseEther("1.00"),
-                });
-            } catch (e) {
-                error = e;
-            }
-
-            expect(error.reason).to.equal(
-                "non-payable method cannot override value"
-            );
-            expect(error.code).to.equal("UNSUPPORTED_OPERATION");
-            expect(instance.purchaseToken()).to.not.be.rejected;
-        });
-    });
-
     describe("Gas target", function () {
         it("The functions MUST meet the expected gas efficiency", async function () {
-            const gasEstimate = await instance.estimateGas.getArraySum();
+            //await helpers.time.increase(10_000);
+            const gasEstimate = await instance.estimateGas.purchaseToken({
+                value: ethers.utils.parseEther("0.1"),
+            });
 
             logGasUsage(gasEstimate);
 
@@ -63,19 +47,14 @@ describe("Require", async function () {
     });
 
     describe("Business logic", function () {
-        it("The functions MUST perform as expected", async function () {
-            await instance.setArray([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-            expect(await await instance.getArraySum()).to.equal(45);
-
-            await instance.setArray([
-                100, 200, 300, 400, 500, 600, 700, 800, 900,
-            ]);
-            expect(await await instance.getArraySum()).to.equal(4500);
+        it("it should revert if msg.value is not 0.1 ether", async function () {
+            await expect(instance.purchaseToken()).to.be.reverted;
+            await expect(instance.purchaseToken()).to.be.reverted;
+            await expect(instance.purchaseToken()).to.be.reverted;
         });
 
-        it("should not overflow", async function () {
-            await instance.setArray([2n ** 256n - 1n, 4n]);
-            await expect(instance.getArraySum()).to.be.reverted;
-        });
+        it("should not allow purchases within the cooldown window", async function () {});
+
+        it("should allow purchases outside the cooldown window", async function () {});
     });
 });

@@ -7,7 +7,7 @@
 - [ ] EscrowV2
 - [ ] Mint
 - [ ] Presale
-- [ ] Require
+- [x] Require (easy)
 - [ ] Staking
 
 ## Contributors

@@ -11,7 +11,7 @@
 - [ ] Staking
 
 ## Contributors
-DO NOT COMMIT SOLUTIONS, BE SURE TO PUT ANSWERS IN `contracts_optimized` to ensure they fall into the `.gitignore`
+DO NOT COMMIT SOLUTIONS, BE SURE TO PUT ANSWERS IN `contracts/contracts_optimized` to ensure they fall into the `.gitignore`
 
 ## Players
 Your goal is to optimize the contracts such that they reach the target efficiency.

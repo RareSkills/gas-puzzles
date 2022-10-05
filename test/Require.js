@@ -33,7 +33,7 @@ describe("Require", async function () {
 
     describe("Gas target", function () {
         it("The functions MUST meet the expected gas efficiency", async function () {
-            //await helpers.time.increase(10_000);
+            await helpers.time.increase(10_000);
             const gasEstimate = await instance.estimateGas.purchaseToken({
                 value: ethers.utils.parseEther("0.1"),
             });
@@ -48,13 +48,42 @@ describe("Require", async function () {
 
     describe("Business logic", function () {
         it("it should revert if msg.value is not 0.1 ether", async function () {
-            await expect(instance.purchaseToken()).to.be.reverted;
-            await expect(instance.purchaseToken()).to.be.reverted;
+            await expect(
+                instance.purchaseToken({
+                    value: ethers.utils.parseEther("0.0999"),
+                })
+            ).to.be.reverted;
+            await expect(
+                instance.purchaseToken({
+                    value: ethers.utils.parseEther("0.1001"),
+                })
+            ).to.be.reverted;
+
             await expect(instance.purchaseToken()).to.be.reverted;
         });
 
-        it("should not allow purchases within the cooldown window", async function () {});
+        it("should not allow purchases within the cooldown window", async function () {
+            await instance.purchaseToken({
+                value: ethers.utils.parseEther("0.1"),
+            });
+            await helpers.time.increase(58);
+            await expect(
+                instance.purchaseToken({
+                    value: ethers.utils.parseEther("0.1"),
+                })
+            ).to.be.reverted;
+        });
 
-        it("should allow purchases outside the cooldown window", async function () {});
+        it("should allow purchases outside the cooldown window", async function () {
+            await instance.purchaseToken({
+                value: ethers.utils.parseEther("0.1"),
+            });
+            await helpers.time.increase(60);
+            await expect(
+                instance.purchaseToken({
+                    value: ethers.utils.parseEther("0.1"),
+                })
+            ).to.not.be.reverted;
+        });
     });
 });

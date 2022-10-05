@@ -1,3 +1,9 @@
 {
-  "solidity.compileUsingLocalVersion": "/Users/jeffreyscholz/RareSkills/gas-puzzles/soljson-v0.8.17+commit.8df45f5f.js"
+  // enable globally (here: format on save)
+  "editor.formatOnSave": true,
+  // enable per-language (here: Prettier as formatter)
+  "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "prettier.tabWidth": 4
 }

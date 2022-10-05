@@ -5,7 +5,7 @@ const helpers = require("@nomicfoundation/hardhat-network-helpers");
 
 use(require("chai-as-promised"));
 
-const TARGET_GAS_PRICE = 57_044;
+const TARGET_GAS_PRICE = 23_399;
 const EIGHT_DAYS = 60 * 60 * 24 * 8;
 
 const logGasUsage = (currentGasUsage) => {
@@ -19,25 +19,14 @@ const logGasUsage = (currentGasUsage) => {
     }
 };
 
-describe("Distribute", async function () {
+describe("Require", async function () {
     let instance;
-    let owner;
-    let acct1;
-    let acct2;
-    let acct3;
-    let acct4;
 
     beforeEach(async () => {
-        [owner, acct1, acct2, acct3, acct4] = await ethers.getSigners();
         const ContractFactory = await ethers.getContractFactory(
-            "OptimizedDistribute"
+            "OptimizedRequire"
         );
-        instance = await ContractFactory.deploy([
-            acct1.address,
-            acct2.address,
-            acct3.address,
-            acct4.address,
-        ]);
+        instance = await ContractFactory.deploy();
 
         await instance.deployed();
     });
@@ -46,7 +35,7 @@ describe("Distribute", async function () {
         it("The functions MUST remain non-payable", async function () {
             let error;
             try {
-                await instance.distribute({
+                await instance.purchaseToken({
                     value: ethers.utils.parseEther("1.00"),
                 });
             } catch (e) {
@@ -57,18 +46,13 @@ describe("Distribute", async function () {
                 "non-payable method cannot override value"
             );
             expect(error.code).to.equal("UNSUPPORTED_OPERATION");
-            expect(instance.distribute()).to.not.be.rejected;
+            expect(instance.purchaseToken()).to.not.be.rejected;
         });
     });
 
     describe("Gas target", function () {
         it("The functions MUST meet the expected gas efficiency", async function () {
-            await helpers.time.increase(EIGHT_DAYS);
-            await helpers.setBalance(
-                instance.address,
-                ethers.utils.parseEther("1.00")
-            );
-            const gasEstimate = await instance.estimateGas.distribute();
+            const gasEstimate = await instance.estimateGas.getArraySum();
 
             logGasUsage(gasEstimate);
 
@@ -80,23 +64,18 @@ describe("Distribute", async function () {
 
     describe("Business logic", function () {
         it("The functions MUST perform as expected", async function () {
-            await expect(instance.distribute()).to.be.rejectedWith(
-                "cannot distribute yet"
-            );
+            await instance.setArray([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+            expect(await await instance.getArraySum()).to.equal(45);
 
-            await helpers.time.increase(EIGHT_DAYS);
+            await instance.setArray([
+                100, 200, 300, 400, 500, 600, 700, 800, 900,
+            ]);
+            expect(await await instance.getArraySum()).to.equal(4500);
+        });
 
-            await helpers.setBalance(
-                instance.address,
-                ethers.utils.parseEther("1.00")
-            );
-            await helpers.setBalance(acct1.address, 0);
-
-            await instance.distribute();
-
-            expect(await ethers.provider.getBalance(acct1.address)).to.equal(
-                new BigNumber.from(ethers.utils.parseEther("0.25"))
-            );
+        it("should not overflow", async function () {
+            await instance.setArray([2n ** 256n - 1n, 4n]);
+            await expect(instance.getArraySum()).to.be.reverted;
         });
     });
 });

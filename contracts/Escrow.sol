@@ -9,16 +9,27 @@ contract Escrow is ReentrancyGuard {
     address public buyer;
     address public seller;
     address public arbiter;
+    uint256 public expiration;
+    bool public arbiterUnlocked;
     uint256 public depositDate;
-    uint256 public duration;
     bool public alreadyDeposited;
 
     constructor(
         address _buyer,
         address _seller,
         address _arbiter,
-        uint256 _duration
-    ) {}
+        uint256 _expiration
+    ) {
+        buyer = _buyer;
+        seller = _seller;
+        arbiter = _arbiter;
+        expiration = expiration;
+    }
+
+    modifier onlyArbiter() {
+        require(msg.sender == arbiter, "only arbiter");
+        _;
+    }
 
     function buyerDeposit() public payable nonReentrant {
         require(
@@ -29,15 +40,27 @@ contract Escrow is ReentrancyGuard {
         depositDate = block.timestamp;
     }
 
+    function arbiterRefund() public onlyArbiter {
+        payable(buyer).transfer(address(this).balance);
+    }
+
+    function arbiterUnlock() public onlyArbiter {
+        arbiterUnlocked = true;
+    }
+
+    function updateArbiter(address _newArbiter) public onlyArbiter {
+        arbiter = _newArbiter;
+    }
+
     function sellerWithdraw() public {
         require(
             msg.sender == seller,
             "you are not the seller, you cannot withdraw"
         );
         require(
-            block.timestamp >= depositDate + duration,
-            "you cannot withdraw yet, you greedy seller. Take it easy"
+            arbiterUnlocked || block.timestamp > expiration,
+            "arbiter has not unlocked"
         );
-        payable(msg.sender).transfer(address(this).balance);
+        payable(seller).transfer(address(this).balance);
     }
 }

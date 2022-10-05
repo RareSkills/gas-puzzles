@@ -1,5 +1,15 @@
 # RareSkills Gas Puzzles 
 
+## Puzzles that are ready for you
+- [x] Distribute (hard)
+- [x] Array Sum (easy)
+- [ ] Escrow
+- [ ] EscrowV2
+- [ ] Mint
+- [ ] Presale
+- [ ] Require
+- [ ] Staking
+
 ## Contributors
 DO NOT COMMIT SOLUTIONS, BE SURE TO PUT ANSWERS IN `contracts_optimized` to ensure they fall into the `.gitignore`
 
@@ -9,7 +19,7 @@ Your goal is to optimize the contracts such that they reach the target efficienc
 Rules
 - you may not change the optimizer level
 - you may not change the solidity version
-- you may change function names and refactor functionality as long as you don't break the business logic
+- you may refactor functionality as long as you don't break the business logic
 - you may make reasonable assumptions about what variable sizes are necessary to get things done
 - you may remove unnecessary or redunant logic (some have been intentionally added)
 - because making functions `payable` is a controversial optimization, you do not need to make functions `payable` to reach the gas target unless the function needs to be payable to fulfill its business logic

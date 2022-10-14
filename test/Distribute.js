@@ -14,7 +14,7 @@ const logGasUsage = (currentGasUsage) => {
     console.log(`           The gas target is: ${TARGET_GAS_PRICE}`);
     if (diff < 0) {
         console.log(
-            `           You are \x1b[31m${diff * -1}\x1b[0m below the target`
+            `           You are \x1b[31m${diff * -1}\x1b[0m above the target`
         );
     }
 };

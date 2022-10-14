@@ -91,10 +91,22 @@ describe("Distribute", async function () {
                 ethers.utils.parseEther("1.00")
             );
             await helpers.setBalance(acct1.address, 0);
+            await helpers.setBalance(acct2.address, 0);
+            await helpers.setBalance(acct3.address, 0);
+            await helpers.setBalance(acct4.address, 0);
 
             await instance.distribute();
 
             expect(await ethers.provider.getBalance(acct1.address)).to.equal(
+                new BigNumber.from(ethers.utils.parseEther("0.25"))
+            );
+            expect(await ethers.provider.getBalance(acct2.address)).to.equal(
+                new BigNumber.from(ethers.utils.parseEther("0.25"))
+            );
+            expect(await ethers.provider.getBalance(acct3.address)).to.equal(
+                new BigNumber.from(ethers.utils.parseEther("0.25"))
+            );
+            expect(await ethers.provider.getBalance(acct4.address)).to.equal(
                 new BigNumber.from(ethers.utils.parseEther("0.25"))
             );
         });

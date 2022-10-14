@@ -97,6 +97,15 @@ describe("Distribute", async function () {
             expect(await ethers.provider.getBalance(acct1.address)).to.equal(
                 new BigNumber.from(ethers.utils.parseEther("0.25"))
             );
+            expect(await ethers.provider.getBalance(acct2.address)).to.equal(
+                new BigNumber.from(ethers.utils.parseEther("0.25"))
+            );
+            expect(await ethers.provider.getBalance(acct3.address)).to.equal(
+                new BigNumber.from(ethers.utils.parseEther("0.25"))
+            );
+            expect(await ethers.provider.getBalance(acct4.address)).to.equal(
+                new BigNumber.from(ethers.utils.parseEther("0.25"))
+            );
         });
     });
 });

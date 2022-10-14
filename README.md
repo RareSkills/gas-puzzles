@@ -65,4 +65,4 @@ contract OptimizedDistribute {
 
 All tests can be run with: `npx hardhat test`
 
-Specific tests can be run with: `npx hardhat test ./test/arraySum.js`
+Specific tests can be run with: `npx hardhat test test/arraySum`

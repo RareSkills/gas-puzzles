@@ -72,9 +72,7 @@ describe("Distribute", async function () {
 
             logGasUsage(gasEstimate);
 
-            expect(gasEstimate).to.satisfy(function (val) {
-                return val <= TARGET_GAS_PRICE;
-            });
+            expect(gasEstimate).to.be.lessThan(TARGET_GAS_PRICE);
         });
     });
 
@@ -86,29 +84,20 @@ describe("Distribute", async function () {
 
             await helpers.time.increase(EIGHT_DAYS);
 
-            await helpers.setBalance(
-                instance.address,
-                ethers.utils.parseEther("1.00")
-            );
+            await helpers.setBalance(instance.address, ethers.utils.parseEther("1.00"));
             await helpers.setBalance(acct1.address, 0);
             await helpers.setBalance(acct2.address, 0);
             await helpers.setBalance(acct3.address, 0);
             await helpers.setBalance(acct4.address, 0);
 
             await instance.distribute();
+            
+            const expectedAmount = BigNumber.from(ethers.utils.parseEther("0.25"));
 
-            expect(await ethers.provider.getBalance(acct1.address)).to.equal(
-                new BigNumber.from(ethers.utils.parseEther("0.25"))
-            );
-            expect(await ethers.provider.getBalance(acct2.address)).to.equal(
-                new BigNumber.from(ethers.utils.parseEther("0.25"))
-            );
-            expect(await ethers.provider.getBalance(acct3.address)).to.equal(
-                new BigNumber.from(ethers.utils.parseEther("0.25"))
-            );
-            expect(await ethers.provider.getBalance(acct4.address)).to.equal(
-                new BigNumber.from(ethers.utils.parseEther("0.25"))
-            );
+            expect(await ethers.provider.getBalance(acct1.address)).to.equal(expectedAmount);
+            expect(await ethers.provider.getBalance(acct2.address)).to.equal(expectedAmount);
+            expect(await ethers.provider.getBalance(acct3.address)).to.equal(expectedAmount);
+            expect(await ethers.provider.getBalance(acct4.address)).to.equal(expectedAmount);
         });
     });
 });

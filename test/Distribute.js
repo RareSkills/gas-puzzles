@@ -72,9 +72,7 @@ describe("Distribute", async function () {
 
             logGasUsage(gasEstimate);
 
-            expect(gasEstimate).to.satisfy(function (val) {
-                return val <= TARGET_GAS_PRICE;
-            });
+            expect(gasEstimate).lte(TARGET_GAS_PRICE);
         });
     });
 

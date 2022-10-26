@@ -3,15 +3,15 @@
 If you want to learn about gas optimization, take the [Udemy gas optimization course](https://www.udemy.com/course/advanced-solidity-understanding-and-optimizing-gas-costs/?referralCode=C4684D6872713525E349)!
 
 ## Puzzles that are ready for you
-
--   [x] Distribute (hard)
--   [x] Array Sum (easy)
--   [ ] Escrow
--   [ ] EscrowV2
--   [ ] Mint
--   [ ] Presale
--   [x] Require (easy)
--   [ ] Staking
+- [x] Distribute (hard)
+- [x] Array Sum (easy)
+- [x] Mint150 (very hard)
+- [ ] Escrow
+- [ ] EscrowV2
+- [ ] Mint
+- [ ] Presale
+- [x] Require (easy)
+- [ ] Staking
 
 ## Contributors
 

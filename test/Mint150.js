@@ -33,7 +33,7 @@ const logGasUsage = (currentGasUsage) => {
 //   the constructor. We've set this up for you.
 // - You may not modify the victim contract
 
-describe("Distribute", async function () {
+describe("Mint150", async function () {
     let attacker;
     let victimToken;
 

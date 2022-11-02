@@ -5,7 +5,8 @@ If you want to learn about gas optimization, take the [Udemy gas optimization co
 ## Puzzles that are ready for you
 - [x] Distribute (hard)
 - [x] Array Sum (easy)
-- [x] Mint150 (very hard)
+- [x] Mint150 (hard)
+- [x] ERC165 (low level programming required)
 - [ ] Escrow
 - [ ] EscrowV2
 - [ ] Mint

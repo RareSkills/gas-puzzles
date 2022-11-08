@@ -32,12 +32,10 @@ describe('Distribute', async function () {
         const ContractFactory = await ethers.getContractFactory(
             'OptimizedDistribute'
         );
-        instance = await ContractFactory.deploy([
-            acct1.address,
-            acct2.address,
-            acct3.address,
-            acct4.address,
-        ]);
+        instance = await ContractFactory.deploy(
+            [acct1.address, acct2.address, acct3.address, acct4.address],
+            { value: ethers.utils.parseEther("1.00") }
+        );
 
         await instance.deployed();
     });
@@ -72,9 +70,7 @@ describe('Distribute', async function () {
 
             logGasUsage(gasEstimate);
 
-            expect(gasEstimate).to.satisfy(function (val) {
-                return val <= TARGET_GAS_PRICE;
-            });
+            expect(gasEstimate).lte(TARGET_GAS_PRICE);
         });
     });
 
@@ -86,10 +82,6 @@ describe('Distribute', async function () {
 
             await helpers.time.increase(EIGHT_DAYS);
 
-            await helpers.setBalance(
-                instance.address,
-                ethers.utils.parseEther('1.00')
-            );
             await helpers.setBalance(acct1.address, 0);
             await helpers.setBalance(acct2.address, 0);
             await helpers.setBalance(acct3.address, 0);

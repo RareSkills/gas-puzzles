@@ -1,12 +1,10 @@
 const { expect, use } = require('chai');
 const { ethers } = require('hardhat');
-const { BigNumber } = ethers;
-const helpers = require('@nomicfoundation/hardhat-network-helpers');
+const { loadFixture } = require('@nomicfoundation/hardhat-network-helpers');
 
 use(require('chai-as-promised'));
 
 const TARGET_GAS_PRICE = 23_396;
-const EIGHT_DAYS = 60 * 60 * 24 * 8;
 
 const logGasUsage = (currentGasUsage) => {
     const diff = TARGET_GAS_PRICE - currentGasUsage;
@@ -20,19 +18,20 @@ const logGasUsage = (currentGasUsage) => {
 };
 
 describe('ArraySum', async function () {
-    let instance;
-
-    beforeEach(async () => {
+    async function deployFixture() {
         const ContractFactory = await ethers.getContractFactory(
             'OptimizedArraySum'
         );
-        instance = await ContractFactory.deploy();
+        const instance = await ContractFactory.deploy();
 
         await instance.deployed();
-    });
+
+        return { instance };
+    }
 
     describe('Payable', function () {
         it('The functions MUST remain non-payable', async function () {
+            const { instance } = await loadFixture(deployFixture);
             let error;
             try {
                 await instance.getArraySum({
@@ -52,6 +51,7 @@ describe('ArraySum', async function () {
 
     describe('Gas target', function () {
         it('The functions MUST meet the expected gas efficiency', async function () {
+            const { instance } = await loadFixture(deployFixture);
             const gasEstimate = await instance.estimateGas.getArraySum();
 
             logGasUsage(gasEstimate);
@@ -62,6 +62,7 @@ describe('ArraySum', async function () {
 
     describe('Business logic', function () {
         it('The functions MUST perform as expected', async function () {
+            const { instance } = await loadFixture(deployFixture);
             await instance.setArray([1, 2, 3, 4, 5, 6, 7, 8, 9]);
             expect(await instance.getArraySum()).to.equal(45);
 
@@ -72,6 +73,7 @@ describe('ArraySum', async function () {
         });
 
         it('should not overflow', async function () {
+            const { instance } = await loadFixture(deployFixture);
             await instance.setArray([2n ** 256n - 1n, 4n]);
             await expect(instance.getArraySum()).to.be.reverted;
         });

@@ -1,6 +1,7 @@
 const { expect, use } = require('chai');
 const { ethers } = require('hardhat');
 const { BigNumber } = ethers;
+const { loadFixture } = require('@nomicfoundation/hardhat-network-helpers');
 const helpers = require('@nomicfoundation/hardhat-network-helpers');
 
 use(require('chai-as-promised'));
@@ -20,29 +21,25 @@ const logGasUsage = (currentGasUsage) => {
 };
 
 describe('Distribute', async function () {
-    let instance;
-    let owner;
-    let acct1;
-    let acct2;
-    let acct3;
-    let acct4;
-
-    beforeEach(async () => {
+    async function deployFixture() {
         [owner, acct1, acct2, acct3, acct4] = await ethers.getSigners();
         const ContractFactory = await ethers.getContractFactory(
             'OptimizedDistribute'
         );
-        instance = await ContractFactory.deploy(
+        const instance = await ContractFactory.deploy(
             [acct1.address, acct2.address, acct3.address, acct4.address],
-            { value: ethers.utils.parseEther("1.00") }
+            { value: ethers.utils.parseEther('1.00') }
         );
 
         await instance.deployed();
-    });
+
+        return { instance };
+    }
 
     describe('Payable', function () {
         it('The functions MUST remain non-payable', async function () {
             let error;
+            const { instance } = await loadFixture(deployFixture);
             try {
                 await instance.distribute({
                     value: ethers.utils.parseEther('1.00'),
@@ -61,6 +58,7 @@ describe('Distribute', async function () {
 
     describe('Gas target', function () {
         it('The functions MUST meet the expected gas efficiency', async function () {
+            const { instance } = await loadFixture(deployFixture);
             await helpers.time.increase(EIGHT_DAYS);
             await helpers.setBalance(
                 instance.address,
@@ -76,6 +74,7 @@ describe('Distribute', async function () {
 
     describe('Business logic', function () {
         it('The functions MUST perform as expected', async function () {
+            const { instance } = await loadFixture(deployFixture);
             await expect(instance.distribute()).to.be.rejectedWith(
                 'cannot distribute yet'
             );

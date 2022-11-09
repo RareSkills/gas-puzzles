@@ -1,12 +1,11 @@
 const { expect, use } = require('chai');
 const { ethers } = require('hardhat');
-const { BigNumber } = ethers;
+const { loadFixture } = require('@nomicfoundation/hardhat-network-helpers');
 const helpers = require('@nomicfoundation/hardhat-network-helpers');
 
 use(require('chai-as-promised'));
 
 const TARGET_GAS_PRICE = 43_317;
-const EIGHT_DAYS = 60 * 60 * 24 * 8;
 
 const logGasUsage = (currentGasUsage) => {
     const diff = TARGET_GAS_PRICE - currentGasUsage;
@@ -20,19 +19,19 @@ const logGasUsage = (currentGasUsage) => {
 };
 
 describe('Require', async function () {
-    let instance;
-
-    beforeEach(async () => {
+    async function deployFixture() {
         const ContractFactory = await ethers.getContractFactory(
             'OptimizedRequire'
         );
-        instance = await ContractFactory.deploy();
+        const instance = await ContractFactory.deploy();
 
         await instance.deployed();
-    });
+        return { instance };
+    }
 
     describe('Gas target', function () {
         it('The functions MUST meet the expected gas efficiency', async function () {
+            const { instance } = await loadFixture(deployFixture);
             await helpers.time.increase(10_000);
             const gasEstimate = await instance.estimateGas.purchaseToken({
                 value: ethers.utils.parseEther('0.1'),
@@ -48,6 +47,7 @@ describe('Require', async function () {
 
     describe('Business logic', function () {
         it('it should revert if msg.value is not 0.1 ether', async function () {
+            const { instance } = await loadFixture(deployFixture);
             await expect(
                 instance.purchaseToken({
                     value: ethers.utils.parseEther('0.0999'),
@@ -63,6 +63,7 @@ describe('Require', async function () {
         });
 
         it('should not allow purchases within the cooldown window', async function () {
+            const { instance } = await loadFixture(deployFixture);
             await instance.purchaseToken({
                 value: ethers.utils.parseEther('0.1'),
             });
@@ -75,6 +76,7 @@ describe('Require', async function () {
         });
 
         it('should allow purchases outside the cooldown window', async function () {
+            const { instance } = await loadFixture(deployFixture);
             await instance.purchaseToken({
                 value: ethers.utils.parseEther('0.1'),
             });

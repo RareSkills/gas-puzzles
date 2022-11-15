@@ -5,7 +5,7 @@ const helpers = require('@nomicfoundation/hardhat-network-helpers');
 
 use(require('chai-as-promised'));
 
-const TARGET_GAS_PRICE = 23_396;
+const TARGET_GAS_PRICE = 27_855;
 const PRE_SORTED_ARRAY = [1, 2, 3, 4, 5];
 const REVERSE_SORTED_ARRAY = [5, 4, 3, 2, 1];
 const UNSORTED_ARRAY = [5, 1, 4, 3, 2];

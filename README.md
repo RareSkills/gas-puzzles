@@ -11,6 +11,7 @@ If you want to learn about gas optimization, take the [Udemy gas optimization co
 - [ ] EscrowV2
 - [ ] Mint
 - [ ] Presale
+- [x] Vote (easy)
 - [x] Require (easy)
 - [ ] Staking
 

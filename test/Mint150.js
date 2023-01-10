@@ -41,7 +41,7 @@ describe("Mint150", async function () {
         await ethers.provider.send("hardhat_reset");
 
         [owner, attacker] = await ethers.getSigners();
-        const VictimToken = await ethers.getContractFactory("contracts/contracts_optimized/OptimizedMint150.sol:NotRareToken");
+        const VictimToken = await ethers.getContractFactory("contracts/contracts_optimized/Mint150.sol:NotRareToken");
         victimToken = await VictimToken.deploy();
         await victimToken.deployed();
 

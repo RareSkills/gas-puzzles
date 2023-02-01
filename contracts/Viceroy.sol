@@ -17,10 +17,9 @@ contract OligarchyNFT is ERC721 {
  
 contract Governance { 
     IERC721 private immutable oligargyNFT; 
-    CommunityWallet immutable communityWallet;
+    CommunityWallet public immutable communityWallet;
     mapping(uint256 => bool) public idUsed; 
     mapping(address => bool) public alreadyVoted;
-    mapping(address => bool) approvedVoter; 
  
     struct Appointment { 
         //approvedVoters: mapping(address => bool), 
@@ -76,7 +75,6 @@ contract Governance {
  
         viceroys[msg.sender].numAppointments -= 1; 
         viceroys[msg.sender].approvedVoter[voter] = true; 
-        approvedVoter[voter] = true;
     } 
  
     function disapproveVoter(address voter) external { 
@@ -84,7 +82,6 @@ contract Governance {
         require(viceroys[msg.sender].approvedVoter[voter], "cannot disapprove an unapproved address"); 
         viceroys[msg.sender].numAppointments += 1; 
         delete viceroys[msg.sender].approvedVoter[voter]; 
-        delete approvedVoter[voter];
     } 
  
     function createProposal(address viceroy, bytes calldata proposal) external { 
@@ -98,8 +95,9 @@ contract Governance {
         proposals[proposalId].data = proposal;
     } 
  
-    function voteOnProposal(uint256 proposal, bool inFavor) external { 
-        require(approvedVoter[msg.sender], "Not an approved voter");
+    function voteOnProposal(uint256 proposal, bool inFavor, address viceroy) external { 
+        require(proposals[proposal].data.length != 0, "proposal not found");
+        require(viceroys[viceroy].approvedVoter[msg.sender], "Not an approved voter");
         require(!alreadyVoted[msg.sender], "Already voted");
         if(inFavor) {
             proposals[proposal].votes += 1;
@@ -122,7 +120,7 @@ contract CommunityWallet {
     } 
 
     function exec(address target, bytes calldata data, uint256 value) external { 
-        require(msg.sender == governance); 
+        require(msg.sender == governance, "Caller is not governance contract"); 
         (bool res, ) = target.call{value: value}(data); 
         require(res, "call failed");  
     } 

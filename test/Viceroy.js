@@ -19,11 +19,11 @@ const logGasUsage = (currentGasUsage) => {
 };
 
 describe('Viceroy', async function() {
-    let attacker, oligarch, governance, communityWallet;
+    let attackerWallet, attacker, oligarch, governance, communityWallet;
 
-    beforeEach(async function () {
+    before(async function () {
         const AttackerFactory = await ethers.getContractFactory('GovernanceAttacker');
-        attacker = await AttackerFactory.deploy();
+        attacker = await AttackerFactory.connect(attackerWallet).deploy();
         await attacker.deployed();
 
         const OligarchFactory = await ethers.getContractFactory('OligarchNFT');
@@ -35,22 +35,29 @@ describe('Viceroy', async function() {
         await governance.deployed();
 
         const WalletFactory = await ether.getContractFactory('CommunityWallet');
-        communityWallet = await WalletFactory.deploy(governance.address);
+        communityWallet = await WalletFactory.deploy(governance.address, {value: BigNumber.from('10000000000000000000')});
         await communityWallet.deployed();
     })
 
     describe('Gas Target', async function () {
         it('can exploit', async function() {
-            const exploitTx = await attacker.attack()
+            const exploitTx = await attacker.connect(attackerWallet).attack()
             const receipt = await exploitTx.wait();
-
-            const balance = await ethers.provider.getBalance(communityWallet.address);
-            expect(balance).to.equal(0);
 
             const gasEstimate = receipt.gasUsed;
 
             logGasUsage(gasEstimate);
             expect(gasEstimate).lte(TARGET_GAS_PRICE);
         })
+    })
+
+    after(async function() {
+        const walletBalance = await ethers.provider.getBalance(communityWallet.address);
+        expect(walletBalance).to.equal(0);
+
+        const attackerBalance = await ethers.provider.getBalance(attacker.address)
+        expect(attackerBalance).to.be.greaterThanOrEqual(BigNumber.from('10000000000000000000'))
+    
+        expect(await ethers.provider.getTransactionCount(attackerWallet.address)).to.equal(1, "must exploit in one transaction");
     })
 })

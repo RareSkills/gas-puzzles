@@ -22,21 +22,22 @@ describe('Viceroy', async function() {
     let attackerWallet, attacker, oligarch, governance, communityWallet;
 
     before(async function () {
+        const [owner, attackerWallet] = await ethers.getSigners();
+
         const AttackerFactory = await ethers.getContractFactory('GovernanceAttacker');
         attacker = await AttackerFactory.connect(attackerWallet).deploy();
         await attacker.deployed();
 
-        const OligarchFactory = await ethers.getContractFactory('OligarchNFT');
+        const OligarchFactory = await ethers.getContractFactory('OligarchyNFT');
         oligarch = await OligarchFactory.deploy(attacker.address);
         await oligarch.deployed();
 
-        const GovernanceFactory = await ethers.getContractFactory('GovernanceFactory');
-        governance = await GovernanceFactory.deploy(oligarch.address);
+        const GovernanceFactory = await ethers.getContractFactory('Governance');
+        governance = await GovernanceFactory.deploy(oligarch.address, {value: BigNumber.from('10000000000000000000')});
         await governance.deployed();
 
-        const WalletFactory = await ether.getContractFactory('CommunityWallet');
-        communityWallet = await WalletFactory.deploy(governance.address, {value: BigNumber.from('10000000000000000000')});
-        await communityWallet.deployed();
+        const walletAddress = await governance.communityWallet();
+        communityWallet = await ethers.getContractAt('CommunityWallet', walletAddress);
     })
 
     describe('Gas Target', async function () {

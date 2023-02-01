@@ -10,8 +10,8 @@ contract OligarchyNFT is ERC721 {
         _mint(attacker, 1); 
     } 
  
-    function _beforeTokenTransfer(address, address, uint256) internal override { 
-        revert(); // oligarch cannot transfer the NFT 
+    function _beforeTokenTransfer(address from, address, uint256) internal override { 
+        require(from == address(0), "Cannot transfer nft"); // oligarch cannot transfer the NFT 
     } 
 } 
  
@@ -36,9 +36,9 @@ contract Governance {
     mapping(address => Appointment) public viceroys; 
     mapping(uint256 => Proposal) public proposals;
 
-    constructor(ERC721 _oligarchyNFT) { 
+    constructor(ERC721 _oligarchyNFT) payable { 
         oligargyNFT = _oligarchyNFT; 
-        communityWallet = new CommunityWallet(address(this));
+        communityWallet = new CommunityWallet{value: msg.value}(address(this));
     } 
  
     /*
@@ -115,7 +115,7 @@ contract Governance {
 contract CommunityWallet { 
     address public governance; 
 
-    constructor(address _governance) { 
+    constructor(address _governance) payable { 
         governance = _governance; 
     } 
 

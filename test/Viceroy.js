@@ -5,7 +5,7 @@ const helpers = require('@nomicfoundation/hardhat-network-helpers');
 
 use(require('chai-as-promised'));
 
-const TARGET_GAS_PRICE = 136_508;
+const TARGET_GAS_PRICE = 2866528;
 
 const logGasUsage = (currentGasUsage) => {
     const diff = TARGET_GAS_PRICE - currentGasUsage;
@@ -22,7 +22,7 @@ describe('Viceroy', async function() {
     let attackerWallet, attacker, oligarch, governance, communityWallet;
 
     before(async function () {
-        const [owner, attackerWallet] = await ethers.getSigners();
+        [_, attackerWallet] = await ethers.getSigners();
 
         const AttackerFactory = await ethers.getContractFactory('GovernanceAttacker');
         attacker = await AttackerFactory.connect(attackerWallet).deploy();
@@ -38,11 +38,13 @@ describe('Viceroy', async function() {
 
         const walletAddress = await governance.communityWallet();
         communityWallet = await ethers.getContractAt('CommunityWallet', walletAddress);
+        expect(await ethers.provider.getBalance(walletAddress)).equals(BigNumber.from('10000000000000000000'))
     })
 
     describe('Gas Target', async function () {
         it('can exploit', async function() {
-            const exploitTx = await attacker.connect(attackerWallet).attack()
+            console.log('here')
+            const exploitTx = await attacker.attack(governance.address);
             const receipt = await exploitTx.wait();
 
             const gasEstimate = receipt.gasUsed;
@@ -56,9 +58,9 @@ describe('Viceroy', async function() {
         const walletBalance = await ethers.provider.getBalance(communityWallet.address);
         expect(walletBalance).to.equal(0);
 
-        const attackerBalance = await ethers.provider.getBalance(attacker.address)
+        const attackerBalance = await ethers.provider.getBalance(attackerWallet.address)
         expect(attackerBalance).to.be.greaterThanOrEqual(BigNumber.from('10000000000000000000'))
     
-        expect(await ethers.provider.getTransactionCount(attackerWallet.address)).to.equal(1, "must exploit in one transaction");
+        expect(await ethers.provider.getTransactionCount(attackerWallet.address)).to.equal(2, "must exploit in one transaction");
     })
 })

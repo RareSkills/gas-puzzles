@@ -52,7 +52,7 @@ describe('Security101', async function () {
         expect(
             await ethers.provider.getBalance(attacker.address)
         ).to.be.greaterThan(
-            ethers.utils.parseEther('9900'),
+            ethers.utils.parseEther('19900'),
             'attacker gets money'
         );
         expect(

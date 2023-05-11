@@ -8,6 +8,7 @@ If you want to learn about gas optimization, take the [Udemy gas optimization co
 - [x] Mint150 (hard)
 - [x] ERC165 (low level programming required)
 - [x] Array Sort (medium)
+- [x] Security101 (easy/medium)
 - [ ] Escrow
 - [ ] EscrowV2
 - [ ] Mint

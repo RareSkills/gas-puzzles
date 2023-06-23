@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity 0.8.15;
 
+// You may not modify this contract
 contract Security101 {
     mapping(address => uint256) balances;
 
@@ -16,4 +17,8 @@ contract Security101 {
             balances[msg.sender] -= amount;
         }
     }
+}
+
+contract Attacker {
+    constructor(address victim) {}
 }

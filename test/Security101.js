@@ -19,7 +19,7 @@ describe('Security101', async function () {
 
         [owner, attacker] = await ethers.getSigners();
         const VictimToken = await ethers.getContractFactory(
-            'contracts/contracts_optimized/OptimizedSecurity101.sol:Security101'
+            'contracts/contracts_optimized/Security101.sol:Security101'
         );
         victimToken = await VictimToken.deploy();
         await victimToken.deployed();
@@ -32,7 +32,7 @@ describe('Security101', async function () {
     describe('Gas target (redacted)', function () {
         it('Hack the contract', async function () {
             const attackerContract = await ethers.getContractFactory(
-                'contracts/contracts_optimized/OptimizedSecurity101.sol:OptimizedAttackerSecurity101'
+                'contracts/contracts_optimized/Security101.sol:OptimizedAttackerSecurity101'
             );
 
             const txn = await attackerContract
